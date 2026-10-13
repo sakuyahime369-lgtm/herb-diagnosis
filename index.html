@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ハーブとオーラの診断</title>
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: linear-gradient(160deg, #f4f6ed, #eee5f4);
+  color: #344638;
+}
+main {
+  max-width: 560px;
+  margin: auto;
+  padding: 24px 18px 40px;
+}
+header {
+  text-align: center;
+  padding: 24px 10px;
+}
+h1 { font-size: 27px; line-height: 1.5; }
+.subtitle { color: #657565; }
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+  margin: 16px 0;
+  box-shadow: 0 5px 20px #44552212;
+}
+h2 { font-size: 19px; }
+label {
+  display: block;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #dce5d8;
+  border-radius: 12px;
+  cursor: pointer;
+}
+input { margin-right: 8px; }
+button {
+  width: 100%;
+  padding: 15px;
+  border: 0;
+  border-radius: 14px;
+  background: #547b5c;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+}
+button:hover { background: #3f6547; }
+#result { display: none; }
+.aura {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  margin: 20px auto;
+  background: radial-gradient(circle, #fff9cf, #b9a6e8, #7b8ecb);
+  box-shadow: 0 0 35px #b9a6e899;
+}
+.herb {
+  background: #f5f8f0;
+  padding: 14px;
+  border-radius: 12px;
+  margin: 10px 0;
+}
+.small { font-size: 13px; color: #657565; line-height: 1.7; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div style="font-size:42px">🌿 ✨ 🌿</div>
+  <h1>ハーブとオーラの診断</h1>
+  <p class="subtitle">今のあなたに寄り添う、植物からのヒント</p>
+</header>
+
+<section class="card">
+  <h2>🌼 今の気分は？</h2>
+  <label><input type="radio" name="mood" value="calm" checked> ゆっくり休みたい</label>
+  <label><input type="radio" name="mood" value="energy"> 元気を出したい</label>
+  <label><input type="radio" name="mood" value="refresh"> 気分をすっきりさせたい</label>
+  <label><input type="radio" name="mood" value="happy"> 明るい気持ちになりたい</label>
+
+  <h2>🍃 今、求めていることは？</h2>
+  <label><input type="radio" name="wish" value="rest" checked> 休息とリラックス</label>
+  <label><input type="radio" name="wish" value="focus"> 集中と気分転換</label>
+  <label><input type="radio" name="wish" value="nature"> 自然とのつながり</label>
+
+  <button onclick="diagnose()">私に合うハーブを診断する ✨</button>
+</section>
+
+<section class="card" id="result">
+  <h2 style="text-align:center">あなたの今日のオーラ</h2>
+  <div class="aura" id="aura"></div>
+  <p id="auraText" style="text-align:center"></p>
+  <h2>🌿 おすすめハーブ BEST 3</h2>
+  <div id="herbs"></div>
+  <p class="small">この診断は気分や好みに基づく娯楽・学習用のコンテンツです。オーラを科学的に測定するものではなく、医療上の診断でもありません。</p>
+  <button onclick="diagnose()">もう一度診断する</button>
+</section>
+</main>
+
+<script>
+const herbs = {
+  lavender: {
+    name: "ラベンダー",
+    emoji: "💜",
+    desc: "香りをゆっくり楽しみ、くつろぎの時間を作りたいときに。"
+  },
+  rosemary: {
+    name: "ローズマリー",
+    emoji: "🌿",
+    desc: "すがすがしい香りで気分を切り替えたいときに。"
+  },
+  peppermint: {
+    name: "ペパーミント",
+    emoji: "🍃",
+    desc: "清涼感のある香りでリフレッシュしたいときに。"
+  },
+  chamomile: {
+    name: "カモミール",
+    emoji: "🌼",
+    desc: "やさしい花の香りとともに、穏やかな時間を楽しみたいときに。"
+  },
+  lemonbalm: {
+    name: "レモンバーム",
+    emoji: "🍋",
+    desc: "レモンのような香りで、心地よいひとときを。"
+  },
+  lemongrass: {
+    name: "レモングラス",
+    emoji: "🌾",
+    desc: "明るく爽やかな香りで気分転換したいときに。"
+  },
+  calendula: {
+    name: "カレンデュラ",
+    emoji: "🌻",
+    desc: "鮮やかな花を眺めて、植物の彩りを楽しみたいときに。"
+  }
+};
+
+function diagnose() {
+  const mood = document.querySelector('input[name="mood"]:checked').value;
+  const wish = document.querySelector('input[name="wish"]:checked').value;
+
+  let ids;
+  let color;
+  let auraText;
+
+  if (mood === "calm") {
+    ids = ["lavender", "chamomile", "lemonbalm"];
+    color = "radial-gradient(circle, #fff7df, #c5b1e8, #8b83bc)";
+    auraText = "ラベンダー色のイメージ 🌙 穏やかさと自分をいたわる時間を大切に。";
+  } else if (mood === "energy") {
+    ids = ["rosemary", "lemongrass", "calendula"];
+    color = "radial-gradient(circle, #fff8b5, #f1b85e, #d77f68)";
+    auraText = "あたたかな金色のイメージ ☀️ 小さな一歩から始めてみましょう。";
+  } else if (mood === "refresh") {
+    ids = ["peppermint", "lemongrass", "rosemary"];
+    color = "radial-gradient(circle, #e2fff2, #82d8b5, #5999b4)";
+    auraText = "若葉色のイメージ 🍃 深呼吸して、新鮮な気分を楽しんで。";
+  } else {
+    ids = ["calendula", "lemonbalm", "chamomile"];
+    color = "radial-gradient(circle, #fff8c5, #f3bd72, #ed8e9b)";
+    auraText = "陽だまり色のイメージ 🌼 好きなものに目を向けてみましょう。";
+  }
+
+  if (wish === "rest") {
+    ids = ["chamomile", "lavender", "lemonbalm"];
+  } else if (wish === "focus") {
+    ids = ["rosemary", "peppermint", "lemongrass"];
+  }
+
+  document.getElementById("aura").style.background = color;
+  document.getElementById("auraText").textContent = auraText;
+  document.getElementById("herbs").innerHTML = ids.map((id, i) => {
+    const h = herbs[id];
+    return `<div class="herb"><strong>${i + 1}位 ${h.emoji} ${h.name}</strong><p>${h.desc}</p></div>`;
+  }).join("");
+
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").scrollIntoView({behavior: "smooth"});
+}
+</script>
+</body>
+</html>
