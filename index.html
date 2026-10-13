@@ -143,6 +143,9 @@ button, .upload {
   <p id="auraText" style="text-align:center;line-height:1.8"></p>
   <h2>🌿 おすすめハーブ BEST 3</h2>
   <div id="herbs"></div>
+  <button onclick="saveDiagnosisCard()" style="margin:16px 0;background:#79639b;">
+  🌿 診断カードを作成・画像保存
+</button>
   <p class="small">この診断は気分や好みに基づく娯楽・学習用のコンテンツです。オーラを科学的に測定するものではありません。</p>
   <button onclick="diagnose()">もう一度診断する</button>
 </section>
@@ -235,7 +238,221 @@ function diagnose() {
   document.getElementById("result").style.display = "block";
   document.getElementById("result").scrollIntoView({behavior:"smooth"});
 }
+
+function saveDiagnosisCard() {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = 1000;
+  canvas.height = 1400;
+
+  // 背景
+  const bg = ctx.createLinearGradient(0, 0, 1000, 1400);
+  bg.addColorStop(0, "#f3e9ff");
+  bg.addColorStop(0.5, "#fffaf0");
+  bg.addColorStop(1, "#e1f3e5");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1000, 1400);
+
+  // タイトル
+  ctx.fillStyle = "#514267";
+  ctx.textAlign = "center";
+  ctx.font = "bold 52px sans-serif";
+  ctx.fillText("MY HERB AURA", 500, 85);
+  ctx.font = "30px sans-serif";
+  ctx.fillText("わたしのオーラとハーブ診断", 500, 135);
+
+  // 顔写真
+  const portrait = document.getElementById("portrait");
+  if (portrait && portrait.src && portrait.naturalWidth > 0) {
+    const x = 250, y = 175, w = 500, h = 500;
+    const scale = Math.max(w / portrait.naturalWidth, h / portrait.naturalHeight);
+    const sw = w / scale;
+    const sh = h / scale;
+    const sx = (portrait.naturalWidth - sw) / 2;
+    const sy = (portrait.naturalHeight - sh) / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(500, 425, 250, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(portrait, sx, sy, sw, sh, x, y, w, h);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(500, 425, 200, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#79639b";
+    ctx.font = "32px sans-serif";
+    ctx.fillText("顔写真を登録してください", 500, 435);
+  }
+
+  // オーラ診断結果
+  const aura = document.getElementById("auraText");
+  const auraText = aura ? aura.innerText.trim() : "";
+  ctx.fillStyle = "#514267";
+  ctx.font = "bold 36px sans-serif";
+  ctx.fillText("あなたのオーラ診断", 500, 745);
+
+  ctx.font = "28px sans-serif";
+  const words = ctx.measureText(auraText).width;
+  if (words > 880) {
+    const chars = Math.max(10, Math.floor(auraText.length * 880 / words));
+    ctx.fillText(auraText.slice(0, chars), 500, 800);
+    ctx.fillText(auraText.slice(chars), 500, 840);
+  } else {
+    ctx.fillText(auraText || "診断結果", 500, 805);
+  }
+
+  // おすすめハーブ BEST 3
+  ctx.font = "bold 38px sans-serif";
+  ctx.fillText("おすすめハーブ BEST 3", 500, 900);
+
+  const herbs = document.getElementById("herbs");
+  const items = herbs ? Array.from(herbs.children).slice(0, 3) : [];
+
+  ctx.textAlign = "left";
+  ctx.font = "30px sans-serif";
+  let y = 965;
+
+  items.forEach((item, index) => {
+    const lines = item.innerText.trim().split("\n");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(65, y - 38, 870, 115);
+
+    ctx.fillStyle = "#514267";
+    ctx.font = "bold 30px sans-serif";
+    ctx.fillText(lines[0] || `${index + 1}位`, 90, y);
+
+    ctx.font = "23px sans-serif";
+    const description = lines.slice(1).join(" ").trim();
+    const maxChars = 46;
+    ctx.fillText(description.slice(0, maxChars), 90, y + 38);
+    if (description.length > maxChars) {
+      ctx.fillText(description.slice(maxChars, maxChars * 2), 90, y + 68);
+    }
+    y += 130;
+  });
+
+  // 保存用の画像を開く
+  const imageURL = canvas.toDataURL("image/png");
+  const newWindow = window.open(imageURL, "_blank");
+
+  if (!newWindow) {
+    alert("画像を開けませんでした。Safariのポップアップ設定をご確認ください。");
+  }
+}
+
+function saveDiagnosisCard() {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = 1000;
+  canvas.height = 1400;
+
+  // 背景
+  const bg = ctx.createLinearGradient(0, 0, 1000, 1400);
+  bg.addColorStop(0, "#f3e9ff");
+  bg.addColorStop(0.5, "#fffaf0");
+  bg.addColorStop(1, "#e1f3e5");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1000, 1400);
+
+  // タイトル
+  ctx.fillStyle = "#514267";
+  ctx.textAlign = "center";
+  ctx.font = "bold 52px sans-serif";
+  ctx.fillText("MY HERB AURA", 500, 85);
+  ctx.font = "30px sans-serif";
+  ctx.fillText("わたしのオーラとハーブ診断", 500, 135);
+
+  // 顔写真
+  const portrait = document.getElementById("portrait");
+  if (portrait && portrait.src && portrait.naturalWidth > 0) {
+    const x = 250, y = 175, w = 500, h = 500;
+    const scale = Math.max(w / portrait.naturalWidth, h / portrait.naturalHeight);
+    const sw = w / scale;
+    const sh = h / scale;
+    const sx = (portrait.naturalWidth - sw) / 2;
+    const sy = (portrait.naturalHeight - sh) / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(500, 425, 250, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(portrait, sx, sy, sw, sh, x, y, w, h);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(500, 425, 200, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#79639b";
+    ctx.font = "32px sans-serif";
+    ctx.fillText("顔写真を登録してください", 500, 435);
+  }
+
+  // オーラ診断結果
+  const aura = document.getElementById("auraText");
+  const auraText = aura ? aura.innerText.trim() : "";
+  ctx.fillStyle = "#514267";
+  ctx.font = "bold 36px sans-serif";
+  ctx.fillText("あなたのオーラ診断", 500, 745);
+
+  ctx.font = "28px sans-serif";
+  const words = ctx.measureText(auraText).width;
+  if (words > 880) {
+    const chars = Math.max(10, Math.floor(auraText.length * 880 / words));
+    ctx.fillText(auraText.slice(0, chars), 500, 800);
+    ctx.fillText(auraText.slice(chars), 500, 840);
+  } else {
+    ctx.fillText(auraText || "診断結果", 500, 805);
+  }
+
+  // おすすめハーブ BEST 3
+  ctx.font = "bold 38px sans-serif";
+  ctx.fillText("おすすめハーブ BEST 3", 500, 900);
+
+  const herbs = document.getElementById("herbs");
+  const items = herbs ? Array.from(herbs.children).slice(0, 3) : [];
+
+  ctx.textAlign = "left";
+  ctx.font = "30px sans-serif";
+  let y = 965;
+
+  items.forEach((item, index) => {
+    const lines = item.innerText.trim().split("\n");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(65, y - 38, 870, 115);
+
+    ctx.fillStyle = "#514267";
+    ctx.font = "bold 30px sans-serif";
+    ctx.fillText(lines[0] || `${index + 1}位`, 90, y);
+
+    ctx.font = "23px sans-serif";
+    const description = lines.slice(1).join(" ").trim();
+    const maxChars = 46;
+    ctx.fillText(description.slice(0, maxChars), 90, y + 38);
+    if (description.length > maxChars) {
+      ctx.fillText(description.slice(maxChars, maxChars * 2), 90, y + 68);
+    }
+    y += 130;
+  });
+
+  // 保存用の画像を開く
+  const imageURL = canvas.toDataURL("image/png");
+  const newWindow = window.open(imageURL, "_blank");
+
+  if (!newWindow) {
+    alert("画像を開けませんでした。Safariのポップアップ設定をご確認ください。");
+  }
+}
+  
 </script>
 </body>
 </html>
+function saveDiagnosisCard() {
+}
+</script>
 
